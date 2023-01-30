@@ -45,19 +45,18 @@ public class NoteController {
     @GetMapping("/create")
     public ModelAndView createNote() {
         ModelAndView modelAndView = new ModelAndView("note-create");
-        modelAndView.addObject("note", new Notes());
+        modelAndView.addObject("notes", new Notes());
         return modelAndView;
     }
 
     @PostMapping("/save")
-    public void saveNote(@RequestParam(name = "access") String access,
-                         @RequestParam(name = "setNameNotes") String title,
-                         @RequestParam(name = "setContent") String content,
+    public void saveNote(Notes note,
+                         @RequestParam(name = "access") String access,
                          HttpServletRequest request,
                          HttpServletResponse response) {
 
         String email = request.getUserPrincipal().getName();
-        service.createNote(title, content, Visibility.valueOf(access), email);
+        service.createNote(note.getNameNotes(), note.getContent(), Visibility.valueOf(access), email);
 
         try {
             response.sendRedirect("list");
