@@ -45,19 +45,18 @@ public class NoteController {
     @GetMapping("/create")
     public ModelAndView createNote() {
         ModelAndView modelAndView = new ModelAndView("note-create");
-        modelAndView.addObject("note", new Notes());
+        modelAndView.addObject("notes", new Notes());
         return modelAndView;
     }
 
     @PostMapping("/save")
-    public void saveNote(@RequestParam(name = "access") String access,
-                         @RequestParam(name = "setNameNotes") String title,
-                         @RequestParam(name = "setContent") String content,
+    public void saveNote(Notes note,
+                         @RequestParam(name = "access") String access,
                          HttpServletRequest request,
                          HttpServletResponse response) {
 
         String email = request.getUserPrincipal().getName();
-        service.createNote(title, content, Visibility.valueOf(access), email);
+        service.createNote(note.getNameNotes(), note.getContent(), Visibility.valueOf(access), email);
 
         try {
             response.sendRedirect("list");
@@ -67,25 +66,26 @@ public class NoteController {
     }
 
     @GetMapping("/edit/{id}")
-    public ModelAndView editNote(@PathVariable("id") UUID uuid) {
+    public ModelAndView editNote(@PathVariable("id") UUID uuid,
+                                 HttpServletRequest request) {
         Notes note = service.getNoteByUuid(uuid);
 
-        ModelAndView modelAndView = new ModelAndView("note-edit");
-        modelAndView.addObject("id", note.getId());
-        modelAndView.addObject("nameNotes", note.getNameNotes());
-        modelAndView.addObject("content", note.getContent());
-        modelAndView.addObject("access", note.getVisibility().name());
+        if (note.getUsers().getEmail().equals(request.getUserPrincipal().getName())) {
 
-        return modelAndView;
+            ModelAndView modelAndView = new ModelAndView("note-edit");
+            modelAndView.addObject("notes", note);
+
+            return modelAndView;
+        } else {
+            return new ModelAndView("note-share-error");
+        }
     }
 
     @PostMapping("/edit/{id}/save")
     public void updateNote2(@PathVariable("id") UUID uuid,
-                            @RequestParam(name = "access") String access,
-                            @RequestParam(name = "setNameNotes") String title,
-                            @RequestParam(name = "setContent") String content,
+                            Notes notes,
                             HttpServletResponse response) {
-        service.updateNote(uuid, title, content, Visibility.valueOf(access));
+        service.updateNote(uuid, notes.getNameNotes(), notes.getContent(), notes.getVisibility());
         try {
             response.sendRedirect("/note/list");
         } catch (IOException e) {

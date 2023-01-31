@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
+
         String password = authentication.getCredentials().toString();
 
         System.out.println("username = " + username);
         System.out.println("password = " + password);
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-
-        return checkPassword(userDetails,password);
+        UserDetails userDetails = null;
+        try {
+            userDetails = customUserDetailsService.loadUserByUsername(username);
+            return checkPassword(userDetails,password);
+        }catch (NullPointerException ex){
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @Override
