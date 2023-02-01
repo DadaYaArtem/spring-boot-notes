@@ -35,7 +35,7 @@
         <tbody>
         <tr th:each="notes: ${listOfNotes}">
             <td th:text="${#strings.abbreviate(notes.nameNotes,20)}"></td>
-            <td th:utext="${#strings.abbreviate(notes.content,100)}"></td>
+            <td th:utext="${notes.content}"></td>
             <td th:text="${#strings.toLowerCase(notes.visibility)}"></td>
 
             <td>
