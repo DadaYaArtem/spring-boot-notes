@@ -11,6 +11,7 @@
 </head>
 
 <body class="bg-success p-5 bg-opacity-10">
+
 <div class="row">
     <h1 class="col" th:text="'My notes  ' + ${count} +' pcs'"></h1>
     <div class="p-3 col-sm-auto ms-auto justify-content-end">
@@ -35,7 +36,7 @@
         <tbody>
         <tr th:each="notes: ${listOfNotes}">
             <td th:text="${#strings.abbreviate(notes.nameNotes,20)}"></td>
-            <td th:utext="${notes.content}"></td>
+            <td class="text-truncate" th:utext="${notes.content}"></td>
             <td th:text="${#strings.toLowerCase(notes.visibility)}"></td>
 
             <td>

@@ -2,7 +2,7 @@ package com.groupone.notes;
 
 import com.groupone.users.Users;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -22,4 +22,24 @@ public class Notes {
 
     @ManyToOne
     private Users users;
+
+    public Notes() {
+    }
+
+    public Notes(UUID id, String nameNotes, String content, Visibility visibility) {
+        this.id = id;
+        this.nameNotes = nameNotes;
+        this.content = content;
+        this.visibility = visibility;
+    }
+
+    @Override
+    public String toString() {
+        return "Notes{" +
+                "id=" + id +
+                ", nameNotes='" + nameNotes + '\'' +
+                ", content='" + content + '\'' +
+                ", visibility=" + visibility +
+                '}';
+    }
 }

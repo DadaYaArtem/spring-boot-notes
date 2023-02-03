@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.val;
+import org.jsoup.Jsoup;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,8 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 
 @Controller
@@ -36,8 +36,28 @@ public class NoteController {
         Users byEmail = uservice.findByEmail(email);
 
         ModelAndView modelAndView = new ModelAndView("note-list");
-        modelAndView.addObject("count", byEmail.getNotesList().size());
-        modelAndView.addObject("listOfNotes", byEmail.getNotesList());
+        List<Notes> notesList = byEmail.getNotesList();
+
+        List<Notes> newNotes = new ArrayList<>();
+
+        for (Notes notes : notesList) {
+            System.out.println("notes = " + notes);
+            String content = new String(Jsoup.parse(notes.getContent()).text());
+
+            if (content.length() < 70){
+                System.out.println("content in <70 = " + content);
+            }else {
+                content = content.substring(0,70) + "...";
+                System.out.println("content else " + content);
+            }
+
+            newNotes.add(new Notes(notes.getId(), notes.getNameNotes(), content, notes.getVisibility()));
+        }
+
+        System.out.println("newNotes = " + newNotes);
+
+        modelAndView.addObject("count", notesList.size());
+        modelAndView.addObject("listOfNotes", newNotes);
 
         return modelAndView;
     }
