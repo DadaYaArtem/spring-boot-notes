@@ -16,10 +16,22 @@
 </div>
 
 <br>
-<h4 th:utext="${getContent}"></h4>
+<h4 id="heading"  th:utext="${getContent}"></h4>
+<button class="btn btn-success" onclick="copyElementText('heading')">Copy text</button>
 <input type="hidden" th:value="${getId}">
 <a href="/note/list" class="btn btn-outline-success">Go back</a>
 
+<script>
+    function copyElementText(id) {
+        var text = document.getElementById(id).innerText;
+        var elem = document.createElement("textarea");
+        document.body.appendChild(elem);
+        elem.value = text;
+        elem.select();
+        document.execCommand("copy");
+        document.body.removeChild(elem);
+    }
+</script>
 
 </body>
 </html>
