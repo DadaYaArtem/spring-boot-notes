@@ -21,4 +21,13 @@ public class Users {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id")
     private List<Notes> notesList;
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }
