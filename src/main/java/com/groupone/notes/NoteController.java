@@ -118,6 +118,7 @@ public class NoteController {
     public ModelAndView shareNote(@PathVariable("id") UUID uuid,
                                   HttpServletResponse response,
                                   HttpServletRequest request) {
+        
         try {
             Notes note = service.getNoteByUuid(uuid);
             if (note.getVisibility().equals(Visibility.PUBLIC) ||
