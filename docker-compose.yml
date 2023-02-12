@@ -10,7 +10,6 @@ services:
       - 'POSTGRES_DB=demo'
     expose:
       - '5432'
-
   app:
     build: ./
     container_name: 'java-app'
