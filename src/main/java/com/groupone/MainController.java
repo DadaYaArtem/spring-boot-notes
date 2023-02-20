@@ -19,7 +19,7 @@ public class MainController {
     UsersService usersService;
 
     @GetMapping("/")
-    public String showHomePage(){
+    public String showHomePage() {
         return "redirect:/note/list";
     }
 
@@ -39,13 +39,13 @@ public class MainController {
     }
 
     @GetMapping("/activate/{code}")
-    public ModelAndView activate(@PathVariable String code){
+    public ModelAndView activate(@PathVariable String code,
+                                 HttpServletResponse response) throws IOException {
         ModelAndView modelAndView = new ModelAndView("login");
-
         boolean isActivated = usersService.activateUser(code);
-        if (isActivated){
+        if (isActivated) {
             modelAndView.addObject("message", "User successfully activated");
-        }else {
+        } else {
             modelAndView.addObject("message", "activation code is not found");
         }
 
