@@ -13,10 +13,10 @@ public class Users {
     @Id
     @GeneratedValue
     private UUID id;
-
     private String email;
-
     private String password;
+    private boolean isActive;
+    private String activationCode;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "users_id")

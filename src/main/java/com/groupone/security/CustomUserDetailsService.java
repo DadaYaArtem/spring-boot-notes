@@ -62,7 +62,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             @Override
             public boolean isEnabled() {
-                return true;
+                return user.isActive();
             }
         };
     }

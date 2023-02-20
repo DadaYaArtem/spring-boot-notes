@@ -11,4 +11,6 @@ public interface UsersRepository extends JpaRepository<Users, UUID> {
 
     @Query("SELECT u FROM Users u WHERE u.id = ?1")
     Users findById(String id);
+
+    Users findByActivationCode(String code);
 }
