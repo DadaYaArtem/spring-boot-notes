@@ -33,11 +33,21 @@ public class MainController {
     }
 
     @PostMapping("/register")
-    public void processRegister(@RequestParam(name = "setEmail") String email,
+    public ModelAndView  processRegister(@RequestParam(name = "setEmail") String email,
                                 @RequestParam(name = "setPassword") String password,
-                                HttpServletResponse response) throws IOException {
-        usersService.createUser(email, password);
-        response.sendRedirect("login");
+                                HttpServletResponse response){
+        ModelAndView modelAndView;
+
+        if (usersService.findByEmail(email) != null){
+            modelAndView = new ModelAndView("register");
+            modelAndView.addObject("message", "User with this email already exists");
+            return modelAndView;
+        }else {
+            usersService.createUser(email, password);
+            modelAndView = new ModelAndView("login");
+            return modelAndView;
+        }
+
     }
 
     @GetMapping("/activate/{code}")
