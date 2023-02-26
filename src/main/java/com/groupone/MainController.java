@@ -1,15 +1,18 @@
 package com.groupone;
 
-import com.groupone.users.Users;
+import com.groupone.users.UserEntity;
 import com.groupone.users.UsersService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 
@@ -26,7 +29,6 @@ public class MainController {
     @GetMapping("/register")
     public ModelAndView showRegistrationForm() {
         ModelAndView modelAndView = new ModelAndView("register");
-        modelAndView.addObject("user", new Users());
         return modelAndView;
     }
 
@@ -39,17 +41,15 @@ public class MainController {
     }
 
     @GetMapping("/activate/{code}")
-    public ModelAndView activate(@PathVariable String code,
-                                 HttpServletResponse response) throws IOException {
-        ModelAndView modelAndView = new ModelAndView("login");
+    public RedirectView activate(@PathVariable String code,
+                                 RedirectAttributes attributes) {
         boolean isActivated = usersService.activateUser(code);
         if (isActivated) {
-            modelAndView.addObject("message", "User successfully activated");
+            attributes.addFlashAttribute("message", "User successfully activated");
         } else {
-            modelAndView.addObject("message", "activation code is not found");
+            attributes.addFlashAttribute("message", "Activation code is not found");
         }
-
-        return modelAndView;
+        return new RedirectView("/login");
     }
 
     @GetMapping("/login")

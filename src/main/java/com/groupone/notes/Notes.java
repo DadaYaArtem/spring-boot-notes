@@ -1,6 +1,6 @@
 package com.groupone.notes;
 
-import com.groupone.users.Users;
+import com.groupone.users.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,7 +21,7 @@ public class Notes {
     private Visibility visibility;
 
     @ManyToOne
-    private Users users;
+    private UserEntity user;
 
     public Notes() {
     }

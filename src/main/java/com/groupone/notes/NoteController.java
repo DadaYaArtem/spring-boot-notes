@@ -1,7 +1,7 @@
 package com.groupone.notes;
 
 
-import com.groupone.users.Users;
+import com.groupone.users.UserEntity;
 import com.groupone.users.UsersService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,15 +29,15 @@ public class NoteController {
     @GetMapping("/list")
     public ModelAndView mainUserPage(HttpServletRequest request) {
         String email = request.getUserPrincipal().getName();
-        Users byEmail = uservice.findByEmail(email);
+        UserEntity byEmail = uservice.findByEmail(email);
 
         ModelAndView modelAndView = new ModelAndView("note-list");
-        List<Notes> notesList = byEmail.getNotesList();
 
+        List<Notes> notesList = byEmail.getNotesList();
+        System.out.println("notesList = " + notesList);
         List<Notes> newNotes = new ArrayList<>();
 
         for (Notes notes : notesList) {
-            System.out.println("notes = " + notes);
             String content = new String(Jsoup.parse(notes.getContent()).text());
 
             if (content.length() < 70){
@@ -86,7 +86,7 @@ public class NoteController {
                                  HttpServletRequest request) {
         Notes note = service.getNoteByUuid(uuid);
 
-        if (note.getUsers().getEmail().equals(request.getUserPrincipal().getName())) {
+        if (note.getUser().getEmail().equals(request.getUserPrincipal().getName())) {
 
             ModelAndView modelAndView = new ModelAndView("note-edit");
             modelAndView.addObject("notes", note);
@@ -118,7 +118,7 @@ public class NoteController {
         try {
             Notes note = service.getNoteByUuid(uuid);
             if (note.getVisibility().equals(Visibility.PUBLIC) ||
-                    note.getUsers().getEmail().equals(request.getUserPrincipal().getName())) {
+                    note.getUser().getEmail().equals(request.getUserPrincipal().getName())) {
 
                 ModelAndView modelAndView = new ModelAndView("note-share");
                 modelAndView.addObject("getNameNotes", note.getNameNotes());

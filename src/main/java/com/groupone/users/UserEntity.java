@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class Users {
+@Table(name = "users")
+public class UserEntity {
     @Id
     @GeneratedValue
     private UUID id;
@@ -19,12 +20,12 @@ public class Users {
     private String activationCode;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "users_id")
+    @JoinColumn(name = "user_id")
     private List<Notes> notesList;
 
     @Override
     public String toString() {
-        return "Users{" +
+        return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +

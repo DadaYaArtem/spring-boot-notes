@@ -14,17 +14,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final CustomUserDetailsService customUserDetailsService;
-    private static BCryptPasswordEncoder passwordEcorder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
     public Boolean doPasswordsMatch(String rawPassword,String encodedPassword) {
-        return passwordEcorder.matches(rawPassword, encodedPassword);
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
-
         String password = authentication.getCredentials().toString();
 
         System.out.println("username = " + username);
@@ -48,6 +47,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private Authentication checkPassword(UserDetails user, String rawPassword) {
         System.out.println("rawPassword = " + rawPassword);
         System.out.println("user.getPassword() = " + user.getPassword());
+
+        if (!user.isEnabled()){
+            throw new BadCredentialsException("Email is not validated");
+        }
+
         if (doPasswordsMatch(rawPassword, user.getPassword())) {
             User innerUser = new User(
                     user.getUsername(),

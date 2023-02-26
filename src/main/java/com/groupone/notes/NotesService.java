@@ -17,7 +17,7 @@ public class NotesService {
         notes.setNameNotes(nameNotes);
         notes.setContent(content);
         notes.setVisibility(access);
-        notes.setUsers(usersService.findByEmail(email));
+        notes.setUser(usersService.findByEmail(email));
         notesRepository.save(notes);
     }
 
