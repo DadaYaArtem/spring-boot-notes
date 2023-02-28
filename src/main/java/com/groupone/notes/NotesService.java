@@ -4,8 +4,6 @@ import com.groupone.users.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,7 +17,7 @@ public class NotesService {
         notes.setNameNotes(nameNotes);
         notes.setContent(content);
         notes.setVisibility(access);
-        notes.setUsers(usersService.findByEmail(email));
+        notes.setUser(usersService.findByEmail(email));
         notesRepository.save(notes);
     }
 

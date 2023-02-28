@@ -40,7 +40,7 @@ public class DefaultSecurityConfig {
         http
                     .csrf().disable()
                     .authorizeRequests()
-                    .antMatchers("/register").permitAll()
+                    .antMatchers("/register", "/activate/*").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .httpBasic()
@@ -52,6 +52,7 @@ public class DefaultSecurityConfig {
                     .permitAll()
                     .logoutSuccessUrl("/");
         return http.build();
+
     }
 
     @Autowired
