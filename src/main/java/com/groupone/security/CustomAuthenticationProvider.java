@@ -8,8 +8,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 @RequiredArgsConstructor
 @Service
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -17,7 +19,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    public Boolean doPasswordsMatch(String rawPassword,String encodedPassword) {
+    public Boolean doPasswordsMatch(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
@@ -29,14 +31,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         System.out.println("username = " + username);
         System.out.println("password = " + password);
 
-        UserDetails userDetails = null;
-        try {
-            userDetails = customUserDetailsService.loadUserByUsername(username);
-            return checkPassword(userDetails,password);
-        }catch (NullPointerException ex){
-            ex.printStackTrace();
-        }
-        return null;
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+        return checkPassword(userDetails, password);
     }
 
     @Override
@@ -48,7 +44,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         System.out.println("rawPassword = " + rawPassword);
         System.out.println("user.getPassword() = " + user.getPassword());
 
-        if (!user.isEnabled()){
+        if (!user.isEnabled()) {
             throw new BadCredentialsException("Email is not validated");
         }
 
@@ -61,7 +57,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
             return new UsernamePasswordAuthenticationToken(innerUser, user.getPassword(), user.getAuthorities());
         } else {
-            throw new BadCredentialsException("Bad credentials");
+            throw new BadCredentialsException("This is exception in checkPassword()");
         }
     }
 }

@@ -55,15 +55,9 @@ public class UsersService {
 
     public boolean activateUser(String code) {
         UserEntity user = usersRepository.findByActivationCode(code);
-        if (user == null){
-            return false;
-        }
-
         user.setActivationCode(null);
         user.setActive(true);
-
         usersRepository.save(user);
-        System.out.println(user);
         return true;
     }
 }

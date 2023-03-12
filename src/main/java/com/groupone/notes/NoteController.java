@@ -23,13 +23,13 @@ import java.util.UUID;
 public class NoteController {
 
     private final NotesService service;
-    private final UsersService uservice;
+    private final UsersService usersService;
 
 
     @GetMapping("/list")
     public ModelAndView mainUserPage(HttpServletRequest request) {
         String email = request.getUserPrincipal().getName();
-        UserEntity byEmail = uservice.findByEmail(email);
+        UserEntity byEmail = usersService.findByEmail(email);
 
         ModelAndView modelAndView = new ModelAndView("note-list");
 
@@ -40,10 +40,10 @@ public class NoteController {
         for (Notes notes : notesList) {
             String content = new String(Jsoup.parse(notes.getContent()).text());
 
-            if (content.length() < 70){
+            if (content.length() < 70) {
                 System.out.println("content in <70 = " + content);
-            }else {
-                content = content.substring(0,70) + "...";
+            } else {
+                content = content.substring(0, 70) + "...";
                 System.out.println("content else " + content);
             }
 
@@ -69,16 +69,12 @@ public class NoteController {
     public void saveNote(Notes note,
                          @RequestParam(name = "access") String access,
                          HttpServletRequest request,
-                         HttpServletResponse response) {
+                         HttpServletResponse response) throws IOException {
 
         String email = request.getUserPrincipal().getName();
         service.createNote(note.getNameNotes(), note.getContent(), Visibility.valueOf(access), email);
 
-        try {
-            response.sendRedirect("list");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        response.sendRedirect("list");
     }
 
     @GetMapping("/edit/{id}")
@@ -100,13 +96,11 @@ public class NoteController {
     @PostMapping("/edit/{id}/save")
     public void updateNote2(@PathVariable("id") UUID uuid,
                             Notes notes,
-                            HttpServletResponse response) {
+                            HttpServletResponse response) throws IOException {
         service.updateNote(uuid, notes.getNameNotes(), notes.getContent(), notes.getVisibility());
-        try {
-            response.sendRedirect("/note/list");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        response.sendRedirect("/note/list");
+
     }
 
 
@@ -114,7 +108,7 @@ public class NoteController {
     public ModelAndView shareNote(@PathVariable("id") UUID uuid,
                                   HttpServletResponse response,
                                   HttpServletRequest request) {
-        
+
         try {
             Notes note = service.getNoteByUuid(uuid);
             if (note.getVisibility().equals(Visibility.PUBLIC) ||
@@ -125,7 +119,7 @@ public class NoteController {
                 modelAndView.addObject("getContent", note.getContent());
                 modelAndView.addObject("getId", note.getId());
                 return modelAndView;
-            }else {
+            } else {
                 return new ModelAndView("note-share-error");
             }
 
@@ -135,12 +129,9 @@ public class NoteController {
     }
 
     @PostMapping("/delete/{id}")
-    public void deleteNote(@PathVariable("id") UUID uuid, HttpServletResponse response) {
+    public void deleteNote(@PathVariable("id") UUID uuid, HttpServletResponse response) throws IOException {
         service.deleteNoteByUuid(uuid);
-        try {
-            response.sendRedirect("/note/list");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        response.sendRedirect("/note/list");
     }
 }
