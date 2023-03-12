@@ -31,8 +31,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         System.out.println("username = " + username);
         System.out.println("password = " + password);
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-        return checkPassword(userDetails, password);
+        try {
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+            return checkPassword(userDetails, password);
+        }catch (NullPointerException ex){
+            throw new BadCredentialsException("No such user");
+        }
+
     }
 
     @Override
