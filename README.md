@@ -7,6 +7,7 @@ Docker
 # Installation steps
 - Download project files
 - In project folder open terminal and execute "docker-compose up"
+- to use email verification feautire you need to change mail.username and mail.password in applciation.properties to your smtp information or use provided by me for TEST ONLY
 # URL address
 - localhost:8080
 # Endpoints
