@@ -2,6 +2,7 @@ package com.groupone.notes;
 
 import com.groupone.users.UserEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.util.UUID;

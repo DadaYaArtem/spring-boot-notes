@@ -4,7 +4,6 @@ CREATE TABLE users
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL,
     is_active boolean NOT NULL,
-    activation_code VARCHAR(255),
     PRIMARY KEY (id)
 );
 
@@ -18,3 +17,5 @@ CREATE TABLE notes
     PRIMARY KEY (id),
     CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (id)
 );
+
+

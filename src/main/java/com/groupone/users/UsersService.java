@@ -1,8 +1,11 @@
 package com.groupone.users;
 
 import com.groupone.mail.MailSender;
+import com.groupone.mail.token.VerificationToken;
+import com.groupone.mail.token.VerificationTokenRepository;
 import com.groupone.notes.Notes;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final VerificationTokenRepository tokenRepository;
     private final MailSender mailSender;
 
     public void createUser(String email, String password) {
@@ -23,14 +27,23 @@ public class UsersService {
         userEntity.setActive(false);
         userEntity.setEmail(email);
         userEntity.setPassword(encodedPassword);
-        userEntity.setActivationCode(UUID.randomUUID().toString());
 
         usersRepository.save(userEntity);
+        createVerificationToken(userEntity);
+    }
 
+    private void sendMessage(UserEntity userEntity, VerificationToken token) {
         String message = String.format("Hello! \n" +
                         "Welcome to Notes. Please, visit next link: http://localhost:8080/activate/%s",
-                userEntity.getActivationCode());
+                token.getToken());
         mailSender.send(userEntity.getEmail(), "Activation code", message);
+    }
+
+    public void createVerificationToken(UserEntity user) {
+        String token = UUID.randomUUID().toString();
+        VerificationToken verificationToken = new VerificationToken(token, user);
+        tokenRepository.save(verificationToken);
+        sendMessage(user, verificationToken);
     }
 
     public UserEntity getUserByUuid(UUID userUuid) {
@@ -49,15 +62,23 @@ public class UsersService {
         usersRepository.deleteById(userUuid);
     }
 
-    public UserEntity findByEmail(String email){
+    public UserEntity findByEmail(String email) {
         return usersRepository.findByEmail(email);
     }
 
     public boolean activateUser(String code) {
-        UserEntity user = usersRepository.findByActivationCode(code);
-        user.setActivationCode(null);
-        user.setActive(true);
-        usersRepository.save(user);
+        VerificationToken byToken = tokenRepository.findByToken(code);
+        if (byToken == null) {
+            return false;
+        }
+        byToken.setToken(null);
+
+        UserEntity userEntity = byToken.getUserEntity();
+        userEntity.setActive(true);
+        usersRepository.save(userEntity);
+        tokenRepository.delete(byToken);
+
         return true;
     }
+
 }

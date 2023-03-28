@@ -16,6 +16,7 @@
 
     <h1 class="container text-center">Log in</h1>
     <div th:if="${param.error != null}" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}" class="alert alert-danger" role="alert">Incorrect credentials</div>
+    <div th:if="${message != null}" th:text="${message}" class="alert alert-danger" role="alert">Incorrect credentials</div>
 
 
     <form class="reg-form" action="/login" method="post">
