@@ -2,6 +2,10 @@ package com.groupone.users;
 
 import com.groupone.notes.Notes;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
@@ -17,7 +21,6 @@ public class UserEntity {
     private String email;
     private String password;
     private boolean isActive;
-    private String activationCode;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
