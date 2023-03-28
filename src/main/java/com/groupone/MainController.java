@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -31,19 +32,17 @@ public class MainController {
 
     @PostMapping("/register")
     public ModelAndView  processRegister(@RequestParam(name = "setEmail") String email,
-                                @RequestParam(name = "setPassword") String password,
-                                HttpServletResponse response){
+                                @RequestParam(name = "setPassword") String password){
         ModelAndView modelAndView;
 
         if (usersService.findByEmail(email) != null){
             modelAndView = new ModelAndView("register");
             modelAndView.addObject("message", "User with this email already exists");
-            return modelAndView;
         }else {
             usersService.createUser(email, password);
             modelAndView = new ModelAndView("login");
-            return modelAndView;
         }
+        return modelAndView;
 
     }
 
@@ -54,7 +53,7 @@ public class MainController {
         if (isActivated) {
             attributes.addFlashAttribute("message", "User successfully activated");
         } else {
-            attributes.addFlashAttribute("message", "Activation code is not found");
+            attributes.addFlashAttribute("message", "Activation code is incorrect or expired");
         }
         return new RedirectView("/login");
     }
